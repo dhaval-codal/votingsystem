@@ -81,25 +81,25 @@
                     <tr>
                       <td>{{$d->name}}</td>
                       <td>{{ $d->voting_link }}</td>
-                      @if($d->prefer_1 == null)
+                      @if($d->oprefer_1 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->prefer_1}}</td>
+                      <td>{{$d->oprefer_1}}</td>
                       @endif
-                      @if($d->prefer_2 == null)
+                      @if($d->oprefer_2 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->prefer_2}}</td>
+                      <td>{{$d->oprefer_2}}</td>
                       @endif
-                      @if($d->prefer_3 == null)
+                      @if($d->oprefer_3 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->prefer_3}}</td>
+                      <td>{{$d->oprefer_3}}</td>
                       @endif
-                      @if($d->prefer_4 == null)
+                      @if($d->oprefer_4 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->prefer_4}}</td>
+                      <td>{{$d->oprefer_4}}</td>
                       @endif
                       <td>
                         <a onclick="confirmation()" href='{{url("/deletevoter/$d->id")}}'><img src="{{url('/image/delete.png')}}" class="img-responsive" width="30" height="30"></a>

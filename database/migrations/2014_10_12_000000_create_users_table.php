@@ -24,6 +24,10 @@ class CreateUsersTable extends Migration
             $table->string('prefer_2')->nullable();
             $table->string('prefer_3')->nullable();
             $table->string('prefer_4')->nullable();
+            $table->string('oprefer_1')->nullable();
+            $table->string('oprefer_2')->nullable();
+            $table->string('oprefer_3')->nullable();
+            $table->string('oprefer_4')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

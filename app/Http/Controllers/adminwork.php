@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Auth;
 use App\User;
 use App\candidates;
+use App\result;
 
 class adminwork extends Controller
 {
@@ -82,14 +83,18 @@ class adminwork extends Controller
              'c1'=>'required|not_in:0',
              'c2'=>'required|not_in:0',
              'c3'=>'required|not_in:0',
-             'c4'=>'required|not_in:0'
+             'c4'=>'required|not_in:0',
         ]);
 
         $user = User::where('username',$req->input('voterun'))->first();
         $user->prefer_1 = $req->input('c1');
+        $user->oprefer_1 = $req->input('c1');
         $user->prefer_2 = $req->input('c2');
+        $user->oprefer_2 = $req->input('c2');
         $user->prefer_3 = $req->input('c3');
+        $user->oprefer_3 = $req->input('c3');
         $user->prefer_4 = $req->input('c4');
+        $user->oprefer_4 = $req->input('c4');
         $user->save();
 
         $candidate = candidates::where('name',$req->input('c1'))->first();
@@ -112,6 +117,88 @@ class adminwork extends Controller
         return view('aftervote',compact('user'));
     }
 
+    public function winner()
+    {
+        $candidate = candidates::all('name');
+        $rn = 1;
+        $min = 0;
+        $ofr = [ ];
+        $cname = [ ];
+        foreach ($candidate as $i) {
+            array_push($cname, $i->name);
+        }
+        echo("Start : ");
+        while(count($cname) > 1 && $rn <= 4)
+        {
+            $voter = User::where('type',0)->get()->toArray();
+            echo("\n\n\t\t\t\t\t\t\t\t\tRound ".$rn."\n\n");
+            echo("\t\t\t\t\t\t");
+            echo("Candidates"."\t");
+            foreach ($voter as $key) {
+                echo($key['name']."\t");
+            }
+            echo("Count Of ".$rn);
+            echo("\n");
+            foreach ($cname as $val => $key) {
+                echo("\n\t\t\t\t\t\t");
+                $cnt=0;
+                echo($key."\t\t");
+                foreach ($voter as $vkey) {
+                    if($key == $vkey['prefer_1']){
+                        echo("1 \t");
+                    }
+                    else if($key == $vkey['prefer_2']){
+                        echo("2 \t");
+                    }
+                    else if($key == $vkey['prefer_3']){
+                        echo("3 \t");
+                    }
+                    else if($key == $vkey['prefer_4']){
+                        echo("4 \t");
+                    } else {
+                        echo("0 \t");
+                    }
+                }
+                $cnt = count(User::where('prefer_1',$key)->get());
+                if($cnt < $min ) {
+                    array_push($ofr, $key);
+                } else {
+                    // if($cnt > $min and $rn > 1 and ($val-1) >= 0){
+                    //     array_push($ofr, $cname[$val-1]);  
+                    // }
+                    $min = $cnt; 
+                }
+                echo("    ".$cnt);
+                echo("  Min :  ".$min);
+                $cname = array_values($cname);
+            }
+            foreach ($ofr as $key) {
+                $data = User::where('prefer_1',$key)->orwhere('prefer_2',$key)->orwhere('prefer_3',$key)->orwhere('prefer_4',$key)->get();
+                foreach ($data as $skey) {
+                    if($key == $skey['prefer_1']){
+                        $skey->prefer_1 = $skey->prefer_2;
+                        $skey->prefer_2 = $skey->prefer_3;
+                        $skey->prefer_3 = $skey->prefer_4;
+                    }
+                    if($key == $skey['prefer_2']){
+                        $skey->prefer_2 = $skey->prefer_3;
+                        $skey->prefer_3 = $skey->prefer_4;
+                    }
+                    if($key == $skey['prefer_3']){
+                        $skey->prefer_3 = $skey->prefer_4;
+                    }
+                    $skey->save();
+                }
+            }
+            $rn++;
+            $cname = array_diff($cname,$ofr);
+            echo("\nOut Of Race : \n");
+            print_r($ofr);
+        }
+        $cname = array_values($cname);
+        return view('Admin.winner',compact('cname'));
+    }
+    
     public function logout(Request $req)
     {
         $req->session()->flush();

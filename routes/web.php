@@ -62,7 +62,7 @@ Route::get('/deletevoter/{id}', function ($id) {
 Route::get('/sendvote/{vlink}', 'adminwork@voteview');
 
 Route::get('/logout', 'adminwork@logout');
-
+Route::get('/winner', 'adminwork@winner');
 Route::post('/addcandidate', 'adminwork@addcan');
 Route::post('/addvoter', 'adminwork@addvoter');
 Route::post('/adminlog', 'adminwork@login');

@@ -5,11 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{{ url('images/icons/favicon.ico') }}/>
+	<link rel="icon" type="image/png" href="{{ url('images/icons/favicon.ico') }}"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ url('vendor/bootstrap/css/bootstrap.min.css') }}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{	{ url('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url('fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ url('fonts/Linearicons-Free-v1.0.0/icon-font.min.css') }}">
 <!--===============================================================================================-->
@@ -65,7 +65,7 @@
 					<input type="hidden" name="c3" id="c3" value="0">
 					<input type="hidden" name="c4" id="c4" value="0">
 					<input type="hidden" name="voterun" value="{{ $user->username }}">
-				<table class="table" width="100%" cellspacing="0" style="text-align:center;font-size: 20px;font-weight: bolder;color: white;">
+				<table class="table table-bordered" width="100%" cellspacing="0" style="text-align:center;font-size: 20px;font-weight: bolder;color: white;">
                   <tbody>
                     <tr>
                       <td style="color: black;">{{ '1st Choice : ' }}</td>
@@ -93,7 +93,7 @@
                     @foreach ($candidates as $d)
                     <tr>
                       <td>
-                      	<input type="checkbox" class="custom-control-input" id="defaultUnchecked" style="height: 25px;width: 25px;" name="check[]" onclick="check('{{ $d->name }}',this)">
+                      	<input type="checkbox" id="defaultUnchecked" style="height: 25px;width: 25px;" name="check[]" onclick="check('{{ $d->name }}',this)">
                       </td>
                       <td>{{$d->name}}</td>
                     </tr>
@@ -151,7 +151,7 @@
 			}
 			
 		} else {
-			if (document.getElementById('c1').value != 0 && document.getElementById('c2').value != 0  && document.getElementById('c3').value != 0 && document.getElementById('c4').value != 0) {
+			if (document.getElementById('c1').value != 0 && document.getElementById('c2').value != 0  && document.getElementById('c3').value != 0 && document.getElementById('c4').value != 0 ) {
 				alert('You Alread Select 4 Candidates.');
 				cb.checked = false;	
 			} else {

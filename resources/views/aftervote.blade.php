@@ -48,15 +48,15 @@
 	                  <tbody>
 	                    <tr>
 	                      <td style="color: black;">{{ 'Your 1stChoice : ' }}</td>
-	                      <td><label id="lb1">{{ $user->prefer_1 }}</label></td>
+	                      <td><label id="lb1">{{ $user->oprefer_1 }}</label></td>
 	                      <td style="color: black;">{{ 'Your 2ndChoice : ' }}</td>
-	                      <td><label id="lb2">{{ $user->prefer_2 }}</label></td>
+	                      <td><label id="lb2">{{ $user->oprefer_2 }}</label></td>
 	                    </tr>
 	                    <tr>
 	                      <td style="color: black;">{{ 'Your 3rdChoice : ' }}</td>
-	                      <td><label id="lb3">{{ $user->prefer_3 }}</label></td>
+	                      <td><label id="lb3">{{ $user->oprefer_3 }}</label></td>
 	                      <td style="color: black;">{{ 'Your 4thChoice : ' }}</td>
-	                      <td><label id="lb4">{{ $user->prefer_4 }}</label></td>
+	                      <td><label id="lb4">{{ $user->oprefer_4 }}</label></td>
 	                    </tr>
 	                    <tr>
 	                    	<td></td>

@@ -10,7 +10,7 @@
   <meta name="author" content="">
   
 
-  <title>@yield('title',"LFRS")</title>
+  <title>@yield('title',"PVS")</title>
 
   <!-- Custom fonts for this template-->
   <link href="{{url('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -31,112 +31,32 @@
 
 <body id="page-top">
 
-  <!-- Page Wrapper -->
-  <div id="wrapper">
-
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="\admin">
-        <div class="sidebar-brand-icon" style="margin-top: 11px;">
-          <h4 style="font-weight: bolder;">PVS</h4>
-        </div>
-        <div class="sidebar-brand-text mx-3">Welcome {{Session::get('username')}}</div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <li class="nav-item active">
-        <a class="nav-link" href="{{url('/winner')}}">
-          <i class="fas fa-user-plus"></i>
-          <span>Winner Of Voting</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
+    <center>
+      <h2 style="font-weight: bolder;">
         <a class="nav-link" href="{{url('/add_candidate')}}">
-          <i class="fas fa-user-plus"></i>
-          <span>Add Candidate</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="{{url('/add_voter')}}">
-          <i class="fas fa-user-plus"></i>
-          <span>Add Voter</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="{{url('/logout')}}">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-
-    </ul>
-    <!-- End of Sidebar -->
-
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-
-      <!-- Main Content -->
-      <div id="content">
-
-        
-          <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-
-            
-            <div class="topbar-divider d-none d-sm-block"></div>
-            <hr>
-
-          </ul>
-
-        </nav>
-    <!-- End of Topbar -->
-
-    @yield('content')
- 
- </div>
-</div>
-    <!-- Footer -->
-    <footer class="sticky-footer bg-white">
-      <div class="container my-auto">
-        <div class="copyright text-center my-auto">
-          <span>Copyright &copy; DPCREATIONS.</span>
-          <span><h6>Created By Dhaval Pithwa</h6></span>
-        </div>
-      </div>
-    </footer>
-    <!-- End of Footer -->
-
-    <!-- End of Content Wrapper -->
-
-  </div>
-  <!-- End of Page Wrapper -->
-
-  <!-- Scroll to Top Button-->
+        <span>Home</span></a>
+        PVS
+      </h2>
+      <h3>Welcome {{Session::get('username')}}</h3>
+      <div style="background: lightgreen;border-radius: 8px; width: 500px;">
+        <center>
+          @if(count($cname) == 1)
+          <h1 style="float: center;font-size: 50px;color: black;">
+            <b>Winner : {{ $cname[0] }}</b>
+          </h1>
+          @else
+          <h1 style="float: center;font-size: 50px;color: black;">
+            <b>Tie Between : </b>
+            @foreach ($cname as $user)
+                <br><b>{{ $user }}</b>
+            @endforeach
+          </h1>
+          @endif
+        </center>
+      </div> 
+      <br>
+    </center>
+    
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
