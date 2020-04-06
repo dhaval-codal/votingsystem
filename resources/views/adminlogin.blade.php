@@ -42,6 +42,18 @@
 						Admin Login
 					</span>
 					
+					<span class="login100-form-title p-b-43">
+ 						@if (count($errors) > 0)
+						   <div class = "alert alert-danger" style="background: #FA8072; border-radius: 8px;">
+						      <ul>
+						         @foreach ($errors->all() as $error)
+						            <li>{{ $error }}</li>
+						         @endforeach
+						      </ul>
+						   </div>
+						@endif
+					</span>
+
 					<div class="wrap-input100 rs1 validate-input" data-validate = "Username is required">
 						<input class="input100" type="text" name="username">
 						<span class="label-input100">Username</span>

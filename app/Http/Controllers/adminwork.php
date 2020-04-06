@@ -13,23 +13,20 @@ class adminwork extends Controller
 {
     public function login(Request $req)
     {
-        //dd($req->input());
         $input = $req->only(['username'=>'username','password'=>'password']);
-        //dd($input);
         if (Auth::guard('web')->attempt($input)) {
             $user = Auth::user();
             $req->session()->put(['username'=>$user['username']]);
             return redirect()->to('/add_candidate');
         } else {
-            //dd('not Verified');
-            return back();
+            return back()->withErrors(['UserName Or Password Is Wrong.']);
         }
     }
 
     public function addcan(Request $req)
     {
-    	//dd($req->input());
-    	if (count(candidates::all()) == 10) {
+    	//It checkes of maximum number of candidates.
+        if (count(candidates::all()) == 10) {
     		return back()->withErrors(['10 Candidate is Already Completed']);
     	} else {
     		$user = candidates::withTrashed()->where('name',$req->input('name'))->first();
@@ -45,7 +42,7 @@ class adminwork extends Controller
 
     public function addvoter(Request $req)
     {
-        //dd($req->input());
+        //it checkes username must be unique.
         $user = User::withTrashed()->where('name',$req->input('username'))->first();
         if($user) {
             if ($user->type == 1) {
@@ -78,7 +75,6 @@ class adminwork extends Controller
 
     public function savevote(Request $req)
     {
-        //dd($req->input());
         $this->validate($req,[
              'c1'=>'required|not_in:0',
              'c2'=>'required|not_in:0',
@@ -119,28 +115,41 @@ class adminwork extends Controller
 
     public function winner()
     {
-        $candidate = candidates::all('name');
-        $rn = 1;
-        $min = 0;
-        $ofr = [ ];
-        $cname = [ ];
+        $candidate = candidates::all('name');//candidate list
+        $round_num = 1; //count of round.
+        $min = 0; // minimum of count per round.
+        $out_of_race = [ ]; // array of candidate list who are out of race.
+        $cname = [ ]; // array of candidate name
+
+        //convert object to array to print on screen.
         foreach ($candidate as $i) {
             array_push($cname, $i->name);
         }
+
         echo("Start : ");
-        while(count($cname) > 1 && $rn <= 4)
+
+        //while loop starts and it ends when one candidate is left in race. 
+        while(count($cname) > 1 && $round_num <= 4)
         {
+            // Voters vote list.
             $voter = User::where('type',0)->get()->toArray();
-            echo("\n\n\t\t\t\t\t\t\t\t\tRound ".$rn."\n\n");
+            echo("\n\n\t\t\t\t\t\t\t\t\tRound ".$round_num."\n\n");
             echo("\t\t\t\t\t\t");
+
+            // prints candidate name.
             echo("Candidates"."\t");
             foreach ($voter as $key) {
                 echo($key['name']."\t");
             }
-            echo("Count Of ".$rn);
+
+            //print round number
+            echo("Count Of ".$round_num);
             echo("\n");
+
+            //foreach loop for counting the candidates votes.
             foreach ($cname as $val => $key) {
                 echo("\n\t\t\t\t\t\t");
+                //cnt variable for count the votes.
                 $cnt=0;
                 echo($key."\t\t");
                 foreach ($voter as $vkey) {
@@ -160,19 +169,23 @@ class adminwork extends Controller
                     }
                 }
                 $cnt = count(User::where('prefer_1',$key)->get());
+                
+                // if count of votes is smaller then minimum values then he/she is out of race.
+                // else change value of minimum value.
                 if($cnt < $min ) {
-                    array_push($ofr, $key);
+                    array_push($out_of_race, $key);
                 } else {
-                    // if($cnt > $min and $rn > 1 and ($val-1) >= 0){
-                    //     array_push($ofr, $cname[$val-1]);  
-                    // }
                     $min = $cnt; 
                 }
                 echo("    ".$cnt);
                 echo("  Min :  ".$min);
+                //rearrange the array of candidate name.
                 $cname = array_values($cname);
             }
-            foreach ($ofr as $key) {
+            
+            //foreach loop for that candidates who are out of race. 
+            //remove that candidate data from db. 
+            foreach ($out_of_race as $key) {
                 $data = User::where('prefer_1',$key)->orwhere('prefer_2',$key)->orwhere('prefer_3',$key)->orwhere('prefer_4',$key)->get();
                 foreach ($data as $skey) {
                     if($key == $skey['prefer_1']){
@@ -190,12 +203,16 @@ class adminwork extends Controller
                     $skey->save();
                 }
             }
-            $rn++;
-            $cname = array_diff($cname,$ofr);
+            $round_num++;
+
+            //at the end remove that candidate from candidate array.
+            $cname = array_diff($cname,$out_of_race);
             echo("\nOut Of Race : \n");
-            print_r($ofr);
+            print_r($out_of_race);
         }
         $cname = array_values($cname);
+        
+        //at the end cname send to view who is winner.
         return view('Admin.winner',compact('cname'));
     }
     
