@@ -113,63 +113,41 @@ class adminwork extends Controller
         return view('aftervote',compact('user'));
     }
 
+
     public function winner()
     {
         $candidate = candidates::all('name');//candidate list
+        $votern = User::where('type',0)->get(['name']);//voter name list.
         $round_num = 1; //count of round.
         $min = 0; // minimum of count per round.
         $out_of_race = [ ]; // array of candidate list who are out of race.
         $cname = [ ]; // array of candidate name
 
+        //vote list to count votes.
+        $voter = User::where('type',0)->get(['username','prefer_1','prefer_2','prefer_3','prefer_4'])->toArray();
+        
         //convert object to array to print on screen.
         foreach ($candidate as $i) {
             array_push($cname, $i->name);
         }
 
-        echo("Start : ");
-
         //while loop starts and it ends when one candidate is left in race. 
         while(count($cname) > 1 && $round_num <= 4)
         {
-            // Voters vote list.
-            $voter = User::where('type',0)->get()->toArray();
-            echo("\n\n\t\t\t\t\t\t\t\t\tRound ".$round_num."\n\n");
-            echo("\t\t\t\t\t\t");
-
-            // prints candidate name.
-            echo("Candidates"."\t");
-            foreach ($voter as $key) {
-                echo($key['name']."\t");
-            }
-
-            //print round number
-            echo("Count Of ".$round_num);
-            echo("\n");
-
-            //foreach loop for counting the candidates votes.
+            
+            //foreach loop to count the numbers of time candidate is prefered 1.
             foreach ($cname as $val => $key) {
-                echo("\n\t\t\t\t\t\t");
-                //cnt variable for count the votes.
-                $cnt=0;
-                echo($key."\t\t");
-                foreach ($voter as $vkey) {
-                    if($key == $vkey['prefer_1']){
-                        echo("1 \t");
-                    }
-                    else if($key == $vkey['prefer_2']){
-                        echo("2 \t");
-                    }
-                    else if($key == $vkey['prefer_3']){
-                        echo("3 \t");
-                    }
-                    else if($key == $vkey['prefer_4']){
-                        echo("4 \t");
-                    } else {
-                        echo("0 \t");
-                    }
-                }
-                $cnt = count(User::where('prefer_1',$key)->get());
                 
+                $cnt=0;            
+                foreach ($voter as $value) {
+                    
+                    if($key == $value['prefer_1'])
+                    {
+                        $cnt++;
+                    }
+
+                }
+
                 // if count of votes is smaller then minimum values then he/she is out of race.
                 // else change value of minimum value.
                 if($cnt < $min ) {
@@ -177,44 +155,57 @@ class adminwork extends Controller
                 } else {
                     $min = $cnt; 
                 }
-                echo("    ".$cnt);
-                echo("  Min :  ".$min);
-                //rearrange the array of candidate name.
+
+                //sets round wise voter list and out of race voter's list.
+                if($round_num == 1){
+                    $round1 = $voter;    
+                    $round1['ofr'] = $out_of_race;
+                }
+                if($round_num == 2){
+                    $round2 = $voter;
+                    $round2['ofr'] = $out_of_race;
+                }
+                if($round_num == 3){
+                    $round3 = $voter;    
+                    $round3['ofr'] = $out_of_race;
+                }
+
                 $cname = array_values($cname);
             }
-            
-            //foreach loop for that candidates who are out of race. 
-            //remove that candidate data from db. 
-            foreach ($out_of_race as $key) {
-                $data = User::where('prefer_1',$key)->orwhere('prefer_2',$key)->orwhere('prefer_3',$key)->orwhere('prefer_4',$key)->get();
-                foreach ($data as $skey) {
-                    if($key == $skey['prefer_1']){
-                        $skey->prefer_1 = $skey->prefer_2;
-                        $skey->prefer_2 = $skey->prefer_3;
-                        $skey->prefer_3 = $skey->prefer_4;
+
+            //foreach loop to mainuplulate the voter list as any candidate go in out of race state.
+            foreach ($out_of_race as $v) {
+                foreach ($voter as &$cad) {
+                    if($v == $cad['prefer_1']){
+                        if($round_num >= 3 && $v == $out_of_race[count($out_of_race)-1]){
+                            break;
+                        } else {
+                            $cad['prefer_1'] = $cad['prefer_2'];
+                            $cad['prefer_2'] = $cad['prefer_3'];
+                            $cad['prefer_3'] = $cad['prefer_4'];    
+                        }
                     }
-                    if($key == $skey['prefer_2']){
-                        $skey->prefer_2 = $skey->prefer_3;
-                        $skey->prefer_3 = $skey->prefer_4;
+                    if($v == $cad['prefer_2']){
+                        $cad['prefer_2'] = $cad['prefer_3'];
+                        $cad['prefer_3'] = $cad['prefer_4'];
                     }
-                    if($key == $skey['prefer_3']){
-                        $skey->prefer_3 = $skey->prefer_4;
+                    if($v == $cad['prefer_3']){
+                        $cad['prefer_3'] = $cad['prefer_4'];
                     }
-                    $skey->save();
                 }
             }
-            $round_num++;
 
+            $round_num++;
             //at the end remove that candidate from candidate array.
             $cname = array_diff($cname,$out_of_race);
-            echo("\nOut Of Race : \n");
-            print_r($out_of_race);
+        
         }
         $cname = array_values($cname);
         
         //at the end cname send to view who is winner.
-        return view('Admin.winner',compact('cname'));
+        return view('Admin.winner', ['candidate'=>$candidate,'votern'=>$votern,'cname'=>$cname,'round1'=>$round1,'round2'=>$round2,'round3'=>$round3]);
     }
+
     
     public function logout(Request $req)
     {

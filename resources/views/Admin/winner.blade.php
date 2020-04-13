@@ -1,44 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('Admin.adminlayout')
 
-<head>
+@section('title','Admin - Winner')
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  
 
-  <title>@yield('title',"PVS")</title>
-
-  <!-- Custom fonts for this template-->
-  <link href="{{url('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
-  <link href="{{url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i')}}" rel="stylesheet">
-
-  <!-- Custom styles for this template-->
-  <link href="{{url('css/sb-admin-2.min.css')}}" rel="stylesheet">
-
-  <!-- Custom styles for this page -->
-  <link href="{{url('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
-  <script src="{{url('https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js')}}"></script>
-  <script src="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')}}"></script>
-  <script src="{{url('https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js')}}"></script>
-  <link rel="stylesheet" href="{{url('https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.6.9/sweetalert2.min.css')}}">
-  
-
-</head>
-
-<body id="page-top">
-
+@section('content')
+  <style type="text/css">
+    img:hover{
+      cursor: pointer;
+    }
+  </style>
+  <div class="container-fluid" >
     <center>
-      <h2 style="font-weight: bolder;">
-        <a class="nav-link" href="{{url('/add_candidate')}}">
-        <span>Home</span></a>
-        PVS
-      </h2>
-      <h3>Welcome {{Session::get('username')}}</h3>
-      <div style="background: lightgreen;border-radius: 8px; width: 500px;">
+      <div style="background: lightgreen;border-radius: 8px;">
         <center>
           @if(count($cname) == 1)
           <h1 style="float: center;font-size: 50px;color: black;">
@@ -56,59 +29,204 @@
       </div> 
       <br>
     </center>
-    
-  <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
-
-  <!-- Logout Modal-->
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="{{url('vendor/jquery/jquery.min.js')}}"></script>
-  <script src="{{url('vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- Round 1 Table End -->
+  <div class="card shadow mb-4" style="margin-left: 20px;margin-right: 20px;">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Round 1</h6>
+        <h4 style="float: right;margin-top: -25px;margin-bottom: -10px;color: blue;font-weight: bolder;">Out Of Race : 
+          @foreach($round1['ofr'] as $ofr)
+          {{ $ofr }}
+          @endforeach
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="">
+          <table class="table table-bordered" width="98%" cellspacing="0"style="text-align:center;">
+            <thead>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              @foreach ($candidate as $c)
+              @php ($cnt = 0)
+              <tr>
+                <td>{{$c->name}}</td>
+                @for ($i = 0; $i <= (count($votern)-1); $i++)
+                    @if($c->name == $round1[$i]['prefer_1'])
+                         <td>{{ 1 }}</td>
+                         @php ($cnt++)
+                    @elseif($c->name == $round1[$i]['prefer_2'])
+                         <td>{{ 2 }}</td>
+                    @elseif($c->name == $round1[$i]['prefer_3'])
+                         <td>{{ 3 }}</td>
+                    @elseif($c->name == $round1[$i]['prefer_4'])
+                         <td>{{ 4 }}</td>
+                    @else 
+                         <td>{{ 0 }}</td>
+                    @endif
+                @endfor
+                <td>
+                  {{ $cnt }}
+                </td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+<!-- End Round 1 Table End -->
 
-  <!-- Core plugin JavaScript-->
-  <script src="{{url('vendor/jquery-easing/jquery.easing.min.js')}}"></script>
 
-  <!-- Custom scripts for all pages-->
-  <script src="{{url('js/sb-admin-2.min.js')}}"></script>
+<!-- Round 2 Table End -->
+  <div class="card shadow mb-4" style="margin-left: 20px;margin-right: 20px;">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Round 2</h6>
+        <h4 style="float: right;margin-top: -25px;margin-bottom: -10px;color: blue;font-weight: bolder;">Out Of Race : 
+          @foreach($round2['ofr'] as $ofr)
+          {{ $ofr }}
+          @endforeach
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="">
+          <table class="table table-bordered" width="98%" cellspacing="0"style="text-align:center;">
+            <thead>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              @foreach ($candidate as $c)
+                @if(!in_array($c->name, $round1['ofr']))
+                  @php ($cnt = 0)
+                  <tr>
+                    <td>{{$c->name}}</td>
+                    @for ($i = 0; $i <= (count($votern)-1); $i++)
+                        @if($c->name == $round2[$i]['prefer_1'])
+                             <td>{{ 1 }}</td>
+                             @php ($cnt++)
+                        @elseif($c->name == $round2[$i]['prefer_2'])
+                             <td>{{ 2 }}</td>
+                        @elseif($c->name == $round2[$i]['prefer_3'])
+                             <td>{{ 3 }}</td>
+                        @elseif($c->name == $round2[$i]['prefer_4'])
+                             <td>{{ 4 }}</td>
+                        @else 
+                             <td>{{ 0 }}</td>
+                        @endif
+                    @endfor
+                    <td>
+                      {{ $cnt }}
+                    </td>
+                  </tr>
+                @endif
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+<!-- End Round 2 Table End -->
 
-  <!-- Page level plugins -->
-  <script src="{{url('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-  <script src="{{url('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
 
-  <!-- Page level custom scripts -->
-  <script src="{{url('js/demo/datatables-demo.js')}}"></script>
+<!-- Round 1 Table End -->
+  <div class="card shadow mb-4" style="margin-left: 20px;margin-right: 20px;">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Round 3</h6>
+        <h4 style="float: right;margin-top: -25px;margin-bottom: -10px;color: blue;font-weight: bolder;">Out Of Race : 
+          @foreach($round3['ofr'] as $ofr)
+          {{ $ofr }}
+          @endforeach
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="">
+          <table class="table table-bordered" width="98%" cellspacing="0"style="text-align:center;">
+            <thead>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>{{ "Candidates" }}</th>
+                @foreach($votern as $voter)
+                <th>{{ $voter->name }}</th>
+                @endforeach
+                <th>{{ "Count" }}</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              @foreach ($candidate as $c)
+                @if(!in_array($c->name, $round2['ofr']))
+                  @php ($cnt = 0)
+                  <tr>
+                    <td>{{$c->name}}</td>
+                    @for ($i = 0; $i <= (count($votern)-1); $i++)
+                        @if($c->name == $round3[$i]['prefer_1'])
+                             <td>{{ 1 }}</td>
+                             @php ($cnt++)
+                        @elseif($c->name == $round3[$i]['prefer_2'])
+                             <td>{{ 2 }}</td>
+                        @elseif($c->name == $round3[$i]['prefer_3'])
+                             <td>{{ 3 }}</td>
+                        @elseif($c->name == $round3[$i]['prefer_4'])
+                             <td>{{ 4 }}</td>
+                        @else 
+                             <td>{{ 0 }}</td>
+                        @endif
+                    @endfor
+                    <td>
+                      {{ $cnt }}
+                    </td>
+                  </tr>
+                @endif
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+<!-- End Round 3 Table End -->
 
-  <script>
-    // Add the following code if you want the name of the file appear on select
-    $(".custom-file-input").on("change", function() {
-      var fileName = $(this).val().split("\\").pop();
-      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
 
-    $(document).ready(function() {
-        $('#dtHorizontalVerticalExample').DataTable();
-    } );
 
-  </script>
-</body>
+</div>
 
-</html>
+
+@endsection
+      
