@@ -30,12 +30,22 @@
       @csrf
         <!-- Nested Row within Card Body -->
         <div class="row">
-          <div class="col-lg-7">
+          <div class="col-lg-10">
                 <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
+                  <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" name="username" placeholder="Enter UserName" id="username" value="{{ old('username') }}" required="">
                   </div>
-                  <div class="col-sm-6 mb-3 mb-sm-0">
+                  <div class="col-sm-4 mb-3 mb-sm-0">
+                    <select class="form-control" id="weight" name="weight">
+                      <option  value="1">Vote-WeightAge :- 1</option>
+                      <option  value="2">Vote-WeightAge :- 2</option>
+                      <option  value="3">Vote-WeightAge :- 3</option>
+                      <option  value="4">Vote-WeightAge :- 4</option>
+                      <option  value="5">Vote-WeightAge :- 5</option>
+                      <option  value="6">Vote-WeightAge :- 6</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4 mb-3 mb-sm-0">
                     <button class="btn btn-primary btn-user btn-block" id="add">
                       Add
                     </button>
@@ -58,6 +68,7 @@
                     <tr>
                       <th>Voter Name</th>
                       <th>Voting Link</th>
+                      <th>Vote WeightAge</th>
                       <th>1st Prefer </th>
                       <th>2nd Prefer </th>
                       <th>3rd Prefer </th>
@@ -69,6 +80,7 @@
                     <tr>
                       <th>Voter Name</th>
                       <th>Voting Link</th>
+                      <th>Vote WeightAge</th>
                       <th>1st Prefer </th>
                       <th>2nd Prefer </th>
                       <th>3rd Prefer </th>
@@ -81,25 +93,26 @@
                     <tr>
                       <td>{{$d->name}}</td>
                       <td>{{ $d->voting_link }}</td>
-                      @if($d->oprefer_1 == null)
+                      <td>{{ $d->weight }}</td>
+                      @if($d->prefer_1 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->oprefer_1}}</td>
+                      <td>{{$d->prefer_1}}</td>
                       @endif
-                      @if($d->oprefer_2 == null)
+                      @if($d->prefer_2 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->oprefer_2}}</td>
+                      <td>{{$d->prefer_2}}</td>
                       @endif
-                      @if($d->oprefer_3 == null)
+                      @if($d->prefer_3 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->oprefer_3}}</td>
+                      <td>{{$d->prefer_3}}</td>
                       @endif
-                      @if($d->oprefer_4 == null)
+                      @if($d->prefer_4 == null)
                       <td>{{ 'Not Voted Yet' }}</td>
                       @else
-                      <td>{{$d->oprefer_4}}</td>
+                      <td>{{$d->prefer_4}}</td>
                       @endif
                       <td>
                         <a onclick="confirmation()" href='{{url("/deletevoter/$d->id")}}'><img src="{{url('/image/delete.png')}}" class="img-responsive" width="30" height="30"></a>

@@ -57,6 +57,7 @@ class adminwork extends Controller
         $voter->voting_link = 'http://local.pvs.com/sendvote/'.$uniqid;
         $voter->password = Hash::make($uniqid);
         $voter->type = 0;
+        $voter->weight = $req->input('weight');
         $voter->save();
         return redirect()->to('/add_voter');
     }
@@ -84,29 +85,25 @@ class adminwork extends Controller
 
         $user = User::where('username',$req->input('voterun'))->first();
         $user->prefer_1 = $req->input('c1');
-        $user->oprefer_1 = $req->input('c1');
         $user->prefer_2 = $req->input('c2');
-        $user->oprefer_2 = $req->input('c2');
         $user->prefer_3 = $req->input('c3');
-        $user->oprefer_3 = $req->input('c3');
         $user->prefer_4 = $req->input('c4');
-        $user->oprefer_4 = $req->input('c4');
         $user->save();
 
         $candidate = candidates::where('name',$req->input('c1'))->first();
-        $candidate->prefer_1 = $candidate->prefer_1 + 1;
+        $candidate->prefer_1 = $candidate->prefer_1 + $user->weight;
         $candidate->save();
 
         $candidate = candidates::where('name',$req->input('c2'))->first();
-        $candidate->prefer_2 = $candidate->prefer_2 + 1;
+        $candidate->prefer_2 = $candidate->prefer_2 + $user->weight;
         $candidate->save();
 
         $candidate = candidates::where('name',$req->input('c3'))->first();
-        $candidate->prefer_3 = $candidate->prefer_3 + 1;
+        $candidate->prefer_3 = $candidate->prefer_3 + $user->weight;
         $candidate->save();
 
         $candidate = candidates::where('name',$req->input('c4'))->first();
-        $candidate->prefer_4 = $candidate->prefer_4 + 1;
+        $candidate->prefer_4 = $candidate->prefer_4 + $user->weight;
         $candidate->save();
 
         $user = User::where('username',$req->input('voterun'))->first();
@@ -117,14 +114,19 @@ class adminwork extends Controller
     public function winner()
     {
         $candidate = candidates::all('name');//candidate list
-        $votern = User::where('type',0)->get(['name']);//voter name list.
+        $votern = User::where('type',0)->get(['name','weight']);//voter name list.
         $round_num = 1; //count of round.
         $min = 0; // minimum of count per round.
         $out_of_race = [ ]; // array of candidate list who are out of race.
         $cname = [ ]; // array of candidate name
+        $round1 = [ ];$round2 = [ ];$round3 = [ ];
+
+        if(count($candidate) == 0 || count($votern) == 0){
+            return view('Admin.winner', ['errmsg'=>1]);
+        }
 
         //vote list to count votes.
-        $voter = User::where('type',0)->get(['username','prefer_1','prefer_2','prefer_3','prefer_4'])->toArray();
+        $voter = User::where('type',0)->get(['username','weight','prefer_1','prefer_2','prefer_3','prefer_4'])->toArray();
         
         //convert object to array to print on screen.
         foreach ($candidate as $i) {
@@ -143,7 +145,7 @@ class adminwork extends Controller
                     
                     if($key == $value['prefer_1'])
                     {
-                        $cnt++;
+                        $cnt += $value['weight'];
                     }
 
                 }
@@ -153,19 +155,19 @@ class adminwork extends Controller
                 if($cnt < $min ) {
                     array_push($out_of_race, $key);
                 } else {
-                    $min = $cnt; 
+                    $min = $cnt;
                 }
-
+                
                 //sets round wise voter list and out of race voter's list.
                 if($round_num == 1){
                     $round1 = $voter;    
                     $round1['ofr'] = $out_of_race;
                 }
-                if($round_num == 2){
+                else if($round_num == 2){
                     $round2 = $voter;
                     $round2['ofr'] = $out_of_race;
                 }
-                if($round_num == 3){
+                else if($round_num == 3){
                     $round3 = $voter;    
                     $round3['ofr'] = $out_of_race;
                 }
@@ -185,7 +187,7 @@ class adminwork extends Controller
                             $cad['prefer_3'] = $cad['prefer_4'];    
                         }
                     }
-                    if($v == $cad['prefer_2']){
+                    if($v == $cad['prefer_2']){            
                         $cad['prefer_2'] = $cad['prefer_3'];
                         $cad['prefer_3'] = $cad['prefer_4'];
                     }
@@ -201,9 +203,9 @@ class adminwork extends Controller
         
         }
         $cname = array_values($cname);
-        
+
         //at the end cname send to view who is winner.
-        return view('Admin.winner', ['candidate'=>$candidate,'votern'=>$votern,'cname'=>$cname,'round1'=>$round1,'round2'=>$round2,'round3'=>$round3]);
+        return view('Admin.winner', ['candidate'=>$candidate,'votern'=>$votern,'cname'=>$cname,'round1'=>$round1,'round2'=>$round2,'round3'=>$round3,'errmsg'=>0]);
     }
 
     

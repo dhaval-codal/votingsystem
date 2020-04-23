@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $user->voting_link = '/';
         $user->password = Hash::make('codal123');
         $user->type = 1;
+        $user->weight = 1;
         $user->save();
     }
 }

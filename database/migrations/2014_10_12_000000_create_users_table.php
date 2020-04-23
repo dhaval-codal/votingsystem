@@ -20,14 +20,11 @@ class CreateUsersTable extends Migration
             $table->string('voting_link')->unique();
             $table->string('password');
             $table->Integer('type');
+            $table->Integer('weight')->nullable();
             $table->string('prefer_1')->nullable();
             $table->string('prefer_2')->nullable();
             $table->string('prefer_3')->nullable();
             $table->string('prefer_4')->nullable();
-            $table->string('oprefer_1')->nullable();
-            $table->string('oprefer_2')->nullable();
-            $table->string('oprefer_3')->nullable();
-            $table->string('oprefer_4')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

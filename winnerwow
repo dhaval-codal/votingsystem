@@ -1,0 +1,91 @@
+public function winner()
+    {
+        $candidate = candidates::all('name');//candidate list
+        $votern = User::where('type',0)->get(['name']);//voter name list.
+        $round_num = 1; //count of round.
+        $min = 0; // minimum of count per round.
+        $out_of_race = [ ]; // array of candidate list who are out of race.
+        $cname = [ ]; // array of candidate name
+
+        //vote list to count votes.
+        $voter = User::where('type',0)->get(['username','prefer_1','prefer_2','prefer_3','prefer_4'])->toArray();
+        
+        //convert object to array to print on screen.
+        foreach ($candidate as $i) {
+            array_push($cname, $i->name);
+        }
+
+        //while loop starts and it ends when one candidate is left in race. 
+        while(count($cname) > 1 && $round_num <= 4)
+        {
+            
+            //foreach loop to count the numbers of time candidate is prefered 1.
+            foreach ($cname as $val => $key) {
+                
+                $cnt=0;            
+                foreach ($voter as $value) {
+                    
+                    if($key == $value['prefer_1'])
+                    {
+                        $cnt++;
+                    }
+
+                }
+
+                // if count of votes is smaller then minimum values then he/she is out of race.
+                // else change value of minimum value.
+                if($cnt < $min ) {
+                    array_push($out_of_race, $key);
+                } else {
+                    $min = $cnt; 
+                }
+
+                //sets round wise voter list and out of race voter's list.
+                if($round_num == 1){
+                    $round1 = $voter;    
+                    $round1['ofr'] = $out_of_race;
+                }
+                if($round_num == 2){
+                    $round2 = $voter;
+                    $round2['ofr'] = $out_of_race;
+                }
+                if($round_num == 3){
+                    $round3 = $voter;    
+                    $round3['ofr'] = $out_of_race;
+                }
+
+                $cname = array_values($cname);
+            }
+
+            //foreach loop to mainuplulate the voter list as any candidate go in out of race state.
+            foreach ($out_of_race as $v) {
+                foreach ($voter as &$cad) {
+                    if($v == $cad['prefer_1']){
+                        if($round_num >= 3 && $v == $out_of_race[count($out_of_race)-1]){
+                            break;
+                        } else {
+                            $cad['prefer_1'] = $cad['prefer_2'];
+                            $cad['prefer_2'] = $cad['prefer_3'];
+                            $cad['prefer_3'] = $cad['prefer_4'];    
+                        }
+                    }
+                    if($v == $cad['prefer_2']){
+                        $cad['prefer_2'] = $cad['prefer_3'];
+                        $cad['prefer_3'] = $cad['prefer_4'];
+                    }
+                    if($v == $cad['prefer_3']){
+                        $cad['prefer_3'] = $cad['prefer_4'];
+                    }
+                }
+            }
+
+            $round_num++;
+            //at the end remove that candidate from candidate array.
+            $cname = array_diff($cname,$out_of_race);
+        
+        }
+        $cname = array_values($cname);
+        
+        //at the end cname send to view who is winner.
+        return view('Admin.winner', ['candidate'=>$candidate,'votern'=>$votern,'cname'=>$cname,'round1'=>$round1,'round2'=>$round2,'round3'=>$round3]);
+    }

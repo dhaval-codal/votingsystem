@@ -38,7 +38,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="\admin">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="\add_candidate">
         <div class="sidebar-brand-icon" style="margin-top: 11px;">
           <h4 style="font-weight: bolder;">PVS</h4>
         </div>
